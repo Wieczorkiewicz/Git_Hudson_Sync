@@ -2,7 +2,8 @@
 <classpath>
 	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/wlicpsc/Documents/Projects/jgit.jar"/>
+	<classpathentry kind="lib" path="/Users/wlicpsc/Documents/Projects/client-demo-1.2/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="/Users/wlicpsc/Documents/Projects/client-demo-1.2/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/Users/wlicpsc/Documents/Projects/client-demo-1.2/jgit.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
