@@ -53,8 +53,12 @@
         <antcall target="build"/>
     </target>
     <target name="Git_Sync">
+    	<property name="gitrepopath" value="."></property>
+    	<property name="basejoburl" value="http://localhost:8080/job/sync-template"></property>
         <java classname="org.jvnet.hudson.git_hudson_sync.Git_Sync" failonerror="true" fork="yes">
             <classpath refid="Git_Hudson_Sync.classpath"/>
+        	<arg value="${basejoburl}"/>
+        	<arg value="${gitrepopath}"/>
         </java>
     </target>
 </project>
