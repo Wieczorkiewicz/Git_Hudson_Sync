@@ -3,9 +3,9 @@ package org.jvnet.hudson.git_hudson_sync;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Date;
@@ -17,8 +17,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -154,18 +154,16 @@ public class Git_Sync {
 					}
 				}
 				if(exists==false)
-				{
-					generateConfigFromTemplate(template.exists()?template:null, branchNumber);
-					addJob(branchNumber);
-				}
+					addJob(template.exists()?template:null, branchNumber);
 			}
 		}
 	}
 	
-	public static boolean generateConfigFromTemplate(File file, String branchId)
+	public static String generateConfigFromTemplate(File file, String branchId) throws UnsupportedEncodingException
 	{
 		if(file==null)
 			file=new File("configTemplate.xml");
+		String newFileText;
 		try
 		{
 		FileInputStream fis=new FileInputStream(file);
@@ -176,26 +174,20 @@ public class Git_Sync {
 			templateText+=line+"\r\n";				
 		}
 		in.close();
-		String newFileText=templateText.replaceFirst("<name>\\*\\*</name>", "<name>"+branchId+"</name>");
-		FileWriter writer=new FileWriter("job_"+branchId+".xml");
-		writer.write(newFileText);
-		writer.close();
+		newFileText=templateText.replaceFirst("<name>\\*\\*</name>", "<name>"+branchId+"</name>");
 		System.out.println("Success changed and written the file");
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			return false;
+			return "";
 		}
-		return true;
+		return newFileText;
 	}
 	
-	public static boolean addJob(String branchNumber)
+	public static boolean addJob(File file, String branchNumber)
 	{
 		boolean outcome = false;
-		File input=new File("job_"+branchNumber+".xml");
-		input.renameTo(new File("config.xml"));
-		input=new File("config.xml");
 		System.out.println(url+"/createItem?name="+branchNumber);
 		PostMethod post=new PostMethod(url+"/createItem?name="+branchNumber);
 		HttpClient httpclient = new HttpClient();
@@ -204,7 +196,7 @@ public class Git_Sync {
 		try
 		{
 			post.setDoAuthentication(true);
-			post.setRequestEntity(new InputStreamRequestEntity(new FileInputStream(input), input.length()));
+			post.setRequestEntity(new StringRequestEntity(generateConfigFromTemplate(file, branchNumber), "text/xml", "UTF-8"));
 			post.setRequestHeader("Content-type", "text/xml; charset=UTF-8");
 			int result=httpclient.executeMethod(post);
 			System.out.println("Response status code: " + result);
@@ -225,7 +217,7 @@ public class Git_Sync {
 		}
 		if(outcome==false)
 			System.out.println("Error adding the job #"+branchNumber);
-		input.delete();
+//		input.delete();
 		return outcome;
 	}
 	
