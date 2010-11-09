@@ -5,5 +5,7 @@
 	<classpathentry kind="lib" path="/Users/wlicpsc/Documents/Projects/client-demo-1.2/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="/Users/wlicpsc/Documents/Projects/client-demo-1.2/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="/Users/wlicpsc/Documents/Projects/client-demo-1.2/jgit.jar"/>
+	<classpathentry kind="lib" path="/Users/wlicpsc/Documents/Projects/client-demo-1.2/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="lib" path="/Users/wlicpsc/Documents/Projects/client-demo-1.2/commons-codec-1.2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
