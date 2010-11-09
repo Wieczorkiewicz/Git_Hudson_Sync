@@ -174,7 +174,7 @@ public class Git_Sync {
 			templateText+=line+"\r\n";				
 		}
 		in.close();
-		newFileText=templateText.replaceFirst("<name>\\*\\*</name>", "<name>"+branchId+"</name>");
+		newFileText=templateText.replaceFirst("<name>\\*\\*</name>", "<name>#"+branchId+"</name>");
 		System.out.println("Success changed and written the file");
 		}
 		catch(Exception e)
@@ -197,7 +197,6 @@ public class Git_Sync {
 		{
 			post.setDoAuthentication(true);
 			post.setRequestEntity(new StringRequestEntity(generateConfigFromTemplate(file, branchNumber), "text/xml", "UTF-8"));
-			post.setRequestHeader("Content-type", "text/xml; charset=UTF-8");
 			int result=httpclient.executeMethod(post);
 			System.out.println("Response status code: " + result);
 			System.out.println("Response body: ");
@@ -217,7 +216,6 @@ public class Git_Sync {
 		}
 		if(outcome==false)
 			System.out.println("Error adding the job #"+branchNumber);
-//		input.delete();
 		return outcome;
 	}
 	
