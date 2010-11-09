@@ -15,6 +15,8 @@
         <pathelement location="commons-httpclient-3.1.jar"/>
         <pathelement location="dom4j-1.6.1.jar"/>
         <pathelement location="jgit.jar"/>
+        <pathelement location="commons-logging-1.0.4.jar"/>
+        <pathelement location="commons-codec-1.2.jar"/>
     </path>
     <target name="init">
         <mkdir dir="target/classes"/>

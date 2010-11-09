@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.dom4j.Document;
@@ -29,18 +31,22 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 
 public class Git_Sync {
-
+	private static URL url;
+	private static String username;
+	private static String password;
+	private static String host;
+	private static int port;
 	/**
 	 * @param args
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
-		if(args.length!=2)
-			System.out.println("Usage: java <class> <base job> <git repo path>");
+		if(args.length!=3)
+			System.out.println("Usage: java <class> <base job> <git repo path> <template file name>");
 		else
 			try {
-				syncHudsonJobs(args[0], args[1]);
+				syncHudsonJobs(args[0], args[1], args[2]);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -48,12 +54,32 @@ public class Git_Sync {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void syncHudsonJobs(String urlAddr, String gitDir) throws IOException, Exception
+	public static void syncHudsonJobs(String urlAddr, String gitDir, String templateFile) throws IOException, Exception
 	{
-		URL url = urlAddr==null?new URL("http://127.0.0.1:8081/hudson/api/xml"):new URL(urlAddr);
-        Document dom = new SAXReader().read(url);
+		url = urlAddr==null?new URL("http://127.0.0.1:8081/hudson"):new URL(urlAddr);
+		host=url.getHost();
+		System.out.println(host);
+		port=url.getPort()!=0?url.getPort():80;
+		System.out.println(port);
+        String userInfo = url.getUserInfo();
+        if (userInfo != null && userInfo.length() > 0) 
+        {
+        	int colon = userInfo.indexOf(':');
+        	if (colon == -1) 
+        	{
+        		username = userInfo;
+        	}
+        	else
+        	{
+        		username = userInfo.substring(0, colon);
+        		password = userInfo.substring(colon + 1);
+        	}
+        }
+        System.out.println(username+", "+password);
+        Document dom = new SAXReader().read(url+"/api/xml");
         
 		File file=gitDir==null?new File("/Users/wlicpsc/Documents/Projects/Kashoo/books/.git"):new File(gitDir);
+		File template=new File(templateFile);
 		RepositoryBuilder builder=new RepositoryBuilder();
 		Repository repo;
 		repo=builder.setGitDir(file).readEnvironment().findGitDir().build();
@@ -111,7 +137,7 @@ public class Git_Sync {
 				}
 				if(exists==false)
 				{
-					generateConfigFromTemplate(null, branchNumber);
+					generateConfigFromTemplate(template.exists()?template:null, branchNumber);
 					addJob(branchNumber);
 				}
 			}
@@ -152,10 +178,14 @@ public class Git_Sync {
 		File input=new File("job_"+branchNumber+".xml");
 		input.renameTo(new File("config.xml"));
 		input=new File("config.xml");
-		PostMethod post=new PostMethod("http://127.0.0.1:8081/hudson/createItem?name="+branchNumber);
+		System.out.println(url+"/createItem?name="+branchNumber);
+		PostMethod post=new PostMethod(url+"/createItem?name="+branchNumber);
 		HttpClient httpclient = new HttpClient();
+		httpclient.getState().setCredentials(new AuthScope(host, port, "realm"), new UsernamePasswordCredentials(username, password));
+		httpclient.getParams().setAuthenticationPreemptive(true);
 		try
 		{
+			post.setDoAuthentication(true);
 			post.setRequestEntity(new InputStreamRequestEntity(new FileInputStream(input), input.length()));
 			post.setRequestHeader("Content-type", "text/xml; charset=UTF-8");
 			int result=httpclient.executeMethod(post);
@@ -185,10 +215,13 @@ public class Git_Sync {
 	public static boolean deleteJob(String branchNumber)
 	{
 		boolean outcome = false;
-		PostMethod post=new PostMethod("http://127.0.0.1:8081/hudson/job/TestAutoPostJob1/doDelete");
+		PostMethod post=new PostMethod(url+"/job/"+branchNumber+"/doDelete");
 		HttpClient httpclient = new HttpClient();
+		httpclient.getState().setCredentials(new AuthScope(host, port, "realm"), new UsernamePasswordCredentials(username, password));
+		httpclient.getParams().setAuthenticationPreemptive(true);
 		try
 		{
+			post.setDoAuthentication(true);
 			int result=httpclient.executeMethod(post);
 			System.out.println("Response status code: " + result);
 			System.out.println("Response body: ");
