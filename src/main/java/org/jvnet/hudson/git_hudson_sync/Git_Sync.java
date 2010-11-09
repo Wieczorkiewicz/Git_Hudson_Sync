@@ -112,7 +112,7 @@ public class Git_Sync {
 		List<Ref> branchList=lbCommand.call();
 		RevWalk walk=new RevWalk(repo);
 		Date now=new Date();
-		Pattern pattern=Pattern.compile("#[0-9]+");
+		Pattern pattern=Pattern.compile("#[0-9]+.*");
 		Matcher gitMatcher;
 		String branchNumber = null;
 		for(Ref item:branchList)
@@ -216,7 +216,7 @@ public class Git_Sync {
 			System.out.println("Response status code: " + result);
 			System.out.println("Response body: ");
             System.out.println(post.getResponseBodyAsString());
-            if(result>=400)
+            if(result<400)
             	outcome=true;
 		} catch (HttpException e) {
 			// TODO Auto-generated catch block
