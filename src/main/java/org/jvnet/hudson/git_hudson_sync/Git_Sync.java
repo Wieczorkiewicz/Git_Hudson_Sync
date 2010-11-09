@@ -42,11 +42,11 @@ public class Git_Sync {
 	 */
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
-		if(args.length!=2)
-			System.out.println("Usage: java <class> <base job> <git repo path>");
+		if(args.length!=3)
+			System.out.println("Usage: java <class> <base job> <git repo path> <template file name>");
 		else
 			try {
-				syncHudsonJobs(args[0], args[1]);
+				syncHudsonJobs(args[0], args[1], args[2]);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -54,7 +54,7 @@ public class Git_Sync {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void syncHudsonJobs(String urlAddr, String gitDir) throws IOException, Exception
+	public static void syncHudsonJobs(String urlAddr, String gitDir, String templateFile) throws IOException, Exception
 	{
 		url = urlAddr==null?new URL("http://127.0.0.1:8081/hudson"):new URL(urlAddr);
 		host=url.getHost();
@@ -79,6 +79,7 @@ public class Git_Sync {
         Document dom = new SAXReader().read(url+"/api/xml");
         
 		File file=gitDir==null?new File("/Users/wlicpsc/Documents/Projects/Kashoo/books/.git"):new File(gitDir);
+		File template=new File(templateFile);
 		RepositoryBuilder builder=new RepositoryBuilder();
 		Repository repo;
 		repo=builder.setGitDir(file).readEnvironment().findGitDir().build();
@@ -136,7 +137,7 @@ public class Git_Sync {
 				}
 				if(exists==false)
 				{
-					generateConfigFromTemplate(null, branchNumber);
+					generateConfigFromTemplate(template.exists()?template:null, branchNumber);
 					addJob(branchNumber);
 				}
 			}
