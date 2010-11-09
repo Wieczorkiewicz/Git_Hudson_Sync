@@ -24,6 +24,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
+import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.RepositoryBuilder;
@@ -107,6 +108,7 @@ public class Git_Sync {
 		repo=builder.setGitDir(file).readEnvironment().findGitDir().build();
 		Git git=new Git(repo);
 		ListBranchCommand lbCommand=git.branchList();
+		lbCommand.setListMode(ListMode.REMOTE);
 		List<Ref> branchList=lbCommand.call();
 		if(branchList.isEmpty()) {
 			System.out.println("No branches found in "+file);
@@ -120,20 +122,11 @@ public class Git_Sync {
 		{
 			System.out.println(item.getName());
 			System.out.println(item.toString()+", "+item.getObjectId().name());
-			if(item.getName().contains("staging"))
-				branchNumber="staging";
-			else if(item.getName().contains("master"))
-				branchNumber="master";
-			else if(item.getName().contains("list"))
-				branchNumber="list";
-			else
+			gitMatcher=pattern.matcher(item.getName());
+			while(gitMatcher.find())
 			{
-				gitMatcher=pattern.matcher(item.getName());
-				while(gitMatcher.find())
-				{
-					System.out.println(gitMatcher.group(0));
-					branchNumber=gitMatcher.group(0).substring(1);
-				}
+				System.out.println(gitMatcher.group(0));
+				branchNumber=gitMatcher.group(0).substring(1);
 			}
 			RevCommit commit=walk.parseCommit(item.getObjectId());
 			Date commitTime=new Date((long)commit.getCommitTime()*1000);
@@ -230,10 +223,9 @@ public class Git_Sync {
 		{
 			post.releaseConnection();
 		}
-		if(outcome==true)
-			input.delete();
-		else
+		if(outcome==false)
 			System.out.println("Error adding the job #"+branchNumber);
+		input.delete();
 		return outcome;
 	}
 	
