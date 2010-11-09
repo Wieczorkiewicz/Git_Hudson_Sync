@@ -55,6 +55,7 @@
         <antcall target="build"/>
     </target>
     <target name="update_template" if="src_build_template">
+    	<delete file="configTemplate.xml"></delete>
     	<copy file="${src_build_template}" tofile="configTemplate.xml"></copy>
     	<replaceregexp file="configTemplate.xml" match="(git\.BranchSpec&gt;[^&lt;]*&lt;name&gt;)[^&lt;]*" replace="\1**">
     	</replaceregexp>
