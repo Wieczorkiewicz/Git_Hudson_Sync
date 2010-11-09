@@ -66,6 +66,7 @@
             <classpath refid="Git_Hudson_Sync.classpath"/>
         	<arg value="${basejoburl}"/>
         	<arg value="${gitrepopath}"/>
+        	<arg value="configTemplate.xml"/>
         </java>
     </target>
 </project>
