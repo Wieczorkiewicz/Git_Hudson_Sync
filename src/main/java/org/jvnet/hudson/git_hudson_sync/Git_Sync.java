@@ -227,10 +227,9 @@ public class Git_Sync {
 		{
 			post.releaseConnection();
 		}
-		if(outcome==true)
-			input.delete();
-		else
+		if(outcome==false)
 			System.out.println("Error adding the job #"+branchNumber);
+		input.delete();
 		return outcome;
 	}
 	
