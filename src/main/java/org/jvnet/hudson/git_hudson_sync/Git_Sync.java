@@ -72,12 +72,12 @@ public class Git_Sync {
         	int colon = userInfo.indexOf(':');
         	if (colon == -1) 
         	{
-        		username = URLDecoder.decode(userInfo);
+        		username = URLDecoder.decode(userInfo, "UTF-8");
         	}
         	else
         	{
-        		username = URLDecoder.decode(userInfo.substring(0, colon));
-        		password = URLDecoder.decode(userInfo.substring(colon + 1));
+        		username = URLDecoder.decode(userInfo.substring(0, colon), "UTF-8");
+        		password = URLDecoder.decode(userInfo.substring(colon + 1), "UTF-8");
         	}
         }
         System.out.println(username+", "+password);
