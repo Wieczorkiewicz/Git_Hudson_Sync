@@ -100,7 +100,7 @@ public class Git_Sync {
 		{
 			post.releaseConnection();
 		}
-		File file=gitDir==null?new File("/Users/wlicpsc/Documents/Projects/Kashoo/books/.git"):new File(gitDir);
+		File file=gitDir==null?new File("/Users/wlicpsc/Documents/Projects/Kashoo/books/.git"):new File(gitDir).getAbsoluteFile();
 		File template=new File(templateFile);
 		RepositoryBuilder builder=new RepositoryBuilder();
 		Repository repo;
@@ -108,6 +108,9 @@ public class Git_Sync {
 		Git git=new Git(repo);
 		ListBranchCommand lbCommand=git.branchList();
 		List<Ref> branchList=lbCommand.call();
+		if(branchList.isEmpty()) {
+			System.out.println("No branches found in "+file);
+		}
 		RevWalk walk=new RevWalk(repo);
 		Date now=new Date();
 		Pattern pattern=Pattern.compile("#[0-9]+.*");
