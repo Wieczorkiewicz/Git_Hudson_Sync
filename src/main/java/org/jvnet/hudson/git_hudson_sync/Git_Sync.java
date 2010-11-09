@@ -43,7 +43,10 @@ public class Git_Sync {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		if(args.length!=3)
+		{
 			System.out.println("Usage: java <class> <base job> <git repo path> <template file name>");
+			System.out.println("If the template file does not exist, it will use ./configTemplate.xml instead.");
+		}
 		else
 			try {
 				syncHudsonJobs(args[0], args[1], args[2]);
@@ -76,8 +79,27 @@ public class Git_Sync {
         	}
         }
         System.out.println(username+", "+password);
-        Document dom = new SAXReader().read(url+"/api/xml");
-        
+        HttpClient httpclient = new HttpClient();
+		httpclient.getState().setCredentials(new AuthScope(host, port, "realm"), new UsernamePasswordCredentials(username, password));
+		httpclient.getParams().setAuthenticationPreemptive(true);
+		Document dom = null;
+        PostMethod post=new PostMethod(url+"/api/xml");
+        post.setDoAuthentication(true);
+        try
+        {
+        	httpclient.executeMethod(post);
+        	dom = new SAXReader().read(post.getResponseBodyAsStream());
+        } catch (HttpException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			post.releaseConnection();
+		}
 		File file=gitDir==null?new File("/Users/wlicpsc/Documents/Projects/Kashoo/books/.git"):new File(gitDir);
 		File template=new File(templateFile);
 		RepositoryBuilder builder=new RepositoryBuilder();
