@@ -48,7 +48,7 @@
     </remoteRepositories>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>1920</name>
+        <name>2152-Bank-Statement-incorrect-grammar</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <localBranch></localBranch>

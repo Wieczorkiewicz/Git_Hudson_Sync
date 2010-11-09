@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
-
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -115,7 +113,7 @@ public class Git_Sync {
 		}
 		RevWalk walk=new RevWalk(repo);
 		Date now=new Date();
-		Pattern pattern=Pattern.compile("#[0-9]+");
+		Pattern pattern=Pattern.compile("#[0-9]+.*");
 		Matcher gitMatcher;
 		String branchNumber = null;
 		for(Ref item:branchList)
@@ -219,7 +217,7 @@ public class Git_Sync {
 			System.out.println("Response status code: " + result);
 			System.out.println("Response body: ");
             System.out.println(post.getResponseBodyAsString());
-            if(result>=400)
+            if(result<400)
             	outcome=true;
 		} catch (HttpException e) {
 			// TODO Auto-generated catch block
