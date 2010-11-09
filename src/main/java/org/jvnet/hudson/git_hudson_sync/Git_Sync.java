@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 import java.util.Date;
 import java.util.List;
@@ -67,12 +69,12 @@ public class Git_Sync {
         	int colon = userInfo.indexOf(':');
         	if (colon == -1) 
         	{
-        		username = userInfo;
+        		username = URLDecoder.decode(userInfo);
         	}
         	else
         	{
-        		username = userInfo.substring(0, colon);
-        		password = userInfo.substring(colon + 1);
+        		username = URLDecoder.decode(userInfo.substring(0, colon));
+        		password = URLDecoder.decode(userInfo.substring(colon + 1));
         	}
         }
         System.out.println(username+", "+password);
